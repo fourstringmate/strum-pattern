@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Wrapper for Strum Pattern
+
+
+# Check whether Ruby is available on the system.
+if ! command -v ruby 2>&1 >/dev/null;
+then
+    echo "No Ruby on the system" >&2;
+    exit 1;
+fi
+
+# Get the path of current shell script.
+cwd=$(dirname $0);
+# Get the directory of our Ruby script.
+libexec="${cwd}/../libexec";
+
+# Run the Ruby script and pass command-line arguments to it.
+ruby "${libexec}/strum-pattern.rb" "$@";
