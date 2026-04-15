@@ -27,7 +27,8 @@ def command?(name)
 end
 
 
-# Check whether LilyPond exists on the system.
+# Trade-off: shell out to LilyPond instead of embedding a rendering layer here.
+# This keeps the tool small, but makes output depend on an external compiler.
 if not command?("lilypond") then
     STDERR.puts "No LilyPond on the system"
     exit 1
@@ -99,7 +100,6 @@ while ARGV.length > 0 do
   end
 end
 
-# Check whether the user input correct command-line parameter(s).
 if ARGV.length < 1
   STDERR.puts "#{usage}"
   exit 1
@@ -110,7 +110,6 @@ measures = ARGV
 piece = []
 result = "s1"
 
-# FIXME: Update it later.
 begin
   piece = strum_parse(measures)
   result = strum_evaluate(piece)
@@ -127,7 +126,8 @@ lilypond_preamble = <<END_LILYPOND_PREAMBLE
 #(ly:set-option 'crop #t)
 END_LILYPOND_PREAMBLE
 
-# Template for the fretboard of a modern lute-family instrument.
+# Trade-off: generate LilyPond source directly as a string instead of building
+# a separate output IR. Simpler pipeline, tighter coupling to LilyPond syntax.
 lilypond_strum_code = <<END_LILYPOND_STRUM_CODE
 #{lilypond_preamble}
 \\score {
@@ -145,7 +145,6 @@ lilypond_strum_code = <<END_LILYPOND_STRUM_CODE
 }
 END_LILYPOND_STRUM_CODE
 
-# Generate LilyPond code instead of a chord diagram.
 if generate_code
   if "" != output_file_name
     File.open(output_file_name, "w") do |file|
@@ -158,13 +157,11 @@ if generate_code
   exit 0
 end
 
-# Create a temporary LilyPond script.
+# Trade-off: use a temporary script as the boundary between parsing and rendering.
+# Less elegant than an in-process API, but portable and easy to debug.
 lilypond_script = Tempfile.new([ 'lilypond-', '.ly' ])
 
-# Write our code into the temporary file.
 lilypond_script.write lilypond_strum_code
-
-# Close the script to save our code.
 lilypond_script.close
 
 lilypond_script_path = lilypond_script.path
@@ -176,29 +173,23 @@ lilypond_pdf_path = File.join(file_dirname, "#{file_basename_no_ext}.pdf")
 lilypond_cropped_pdf_path = File.join(file_dirname, "#{file_basename_no_ext}.cropped.pdf")
 lilypond_cropped_png_path = File.join(file_dirname, "#{file_basename_no_ext}.cropped.png")
 
-# Set the output directory for LilyPond.
 lilypond_command = "lilypond -o #{file_dirname} #{lilypond_script_path}"
 
-# Compile the script by LilyPond.
 stdout, stderr, status = Open3.capture3(lilypond_command)
 
-# Create a fallback output file name if none.
 if "" == output_file_name
   output_file_name = "#{measures.join("_")}.png"
 end
 
-# Copy the output PNG image.
 if status.success?
   FileUtils.cp(lilypond_cropped_png_path, File.join(Dir.pwd, output_file_name))
 else
   STDERR.puts stderr
 end
 
-# Delete the script and its output.
 lilypond_script.unlink
 File.unlink lilypond_pdf_path if File.exists? lilypond_pdf_path
 File.unlink lilypond_cropped_pdf_path if File.exists? lilypond_cropped_pdf_path
 File.unlink lilypond_cropped_png_path if File.exists? lilypond_cropped_png_path
 
-# Return a status code if the command fails.
 exit 1 if not status.success?
