@@ -73,7 +73,16 @@ the program derives them from the pattern.
 
 ## Limitation
 
-To simplify its usage, the program focuses on common strumming patterns.
+To keep the notation compact and the evaluator easy to understand, the current design intentionally focuses on common strumming patterns.
+
+Some trade-offs come with that choice:
+
+* Rhythm is inferred from the length of each cell rather than from a fully explicit grammar
+* `_` represents continuation, and its exact rendering (merge vs. tie) is inferred automatically
+* Only common merge cases are modeled explicitly; uncommon rhythmic combinations may fall back to tied notes
+* Sextuplet subdivision (6-way subdivision) is not supported
+* Time signature inference is simplified and currently assumes a `/4`-based result
+* The evaluator renders directly to LilyPond instead of using a separate intermediate representation
 
 For more complex rhythms or precise control, you can generate the LilyPond code and refine it manually.
 
