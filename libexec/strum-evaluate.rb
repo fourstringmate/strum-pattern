@@ -137,7 +137,7 @@ def parse_measure(note_strings)
         elsif 4 == ns.length
             level = :sixteenth
         elsif 6 == ns.length
-            level = :sextuplet
+            raise "Sextuplet (6 subdivisions) is not supported yet: -->#{ns}<--"
         else
             raise "Invalid notes: -->#{ns}<--"
         end 
