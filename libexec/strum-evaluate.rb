@@ -99,14 +99,15 @@ end
 def parse_note(note_string, level)
     notes = []
 
-    note_string.each_char.with_index do |c, i|
-        if "D" == c
+    note_string.each_char do |c|
+        case c.upcase
+        when "D"
             notes << Strum.new(level, :downward)
-        elsif "U" == c
+        when "U"
             notes << Strum.new(level, :upward)
-        elsif "R" == c
+        when "R"
             notes << Strum.new(level, :rest)
-        elsif "_" == c
+        when "_"
             notes << Strum.new(level, :extension)
         else
             raise "Unknown note: -->#{c}<--"
@@ -277,9 +278,9 @@ def time_signature(piece)
             elsif :sixteenth == note.level then
                 t += 0.25
             elsif :two_triplet == note.level then
-                t += 0.66
+                t += 2.0 / 3
             elsif :triplet == note.level then
-                t += 0.33
+                t += 1.0 / 3
             end
         end
     end

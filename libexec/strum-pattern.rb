@@ -196,9 +196,9 @@ end
 
 # Delete the script and its output.
 lilypond_script.unlink
-File.unlink lilypond_pdf_path if File.exists? lilypond_pdf_path
-File.unlink lilypond_cropped_pdf_path if File.exists? lilypond_cropped_pdf_path
-File.unlink lilypond_cropped_png_path if File.exists? lilypond_cropped_png_path
+File.unlink lilypond_pdf_path if File.exist? lilypond_pdf_path
+File.unlink lilypond_cropped_pdf_path if File.exist? lilypond_cropped_pdf_path
+File.unlink lilypond_cropped_png_path if File.exist? lilypond_cropped_png_path
 
 # Return a status code if the command fails.
 exit 1 if not status.success?
