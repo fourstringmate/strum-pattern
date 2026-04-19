@@ -15,6 +15,8 @@ class Strum
             return strum
         end
 
+        # Trade-off: encode merge rules in domain object instead of a separate pass
+        # (keeps parsing simple, but mixes semantics into the model)
         if :dotted_half == @level then
             if :quarter == other.level then
                 strum = Strum.new(:whole, @direction)
@@ -81,6 +83,8 @@ def lex_measure(measure)
             note_strings << note_string
             # Create a new measure.
             note_string = ""
+
+        # Trade-off: simple character filtering instead of formal lexer
         elsif measure[i] =~ /[DdUuRr\_]/
             note_string += measure[i]
         else
@@ -122,6 +126,8 @@ def parse_measure(note_strings)
     measure = []
 
     note_strings.each do |ns|
+        # Trade-off: infer rhythm level from string length (implicit grammar)
+        # (simple and compact, but tightly couples syntax to representation)
         if 1 == ns.length
             level = :quarter
         elsif 2 == ns.length
@@ -155,6 +161,8 @@ def strum_parse(measures)
         while j < piece[i].length do
             k = 0
             while k < piece[i][j].length do
+                # Trade-off: hand-rolled traversal over nested structure
+                # (avoids AST abstraction, but less declarative and harder to extend)
                 if not piece[i][j][k+1].nil? then
                     if :extension == piece[i][j][k+1].direction then
                         strum = piece[i][j][k] + piece[i][j][k+1]
@@ -166,6 +174,8 @@ def strum_parse(measures)
                             piece[i][j][k].tie = true
                         end
                     end
+
+                # Trade-off: cross-boundary merge handled inline (beat/measure aware)
                 elsif (not piece[i][j+1].nil?) and (not piece[i][j+1][0].nil?) then
                     if :extension == piece[i][j+1][0].direction then
                         strum = piece[i][j][k] + piece[i][j+1][0]
@@ -197,6 +207,8 @@ end
 def strum_evaluate(piece)
     result = ""
 
+    # Trade-off: direct rendering instead of intermediate IR layer
+    # (simpler pipeline, but output format is tightly coupled)
     piece.each.with_index do |measure, i|
         measure.each.with_index do |beat, j|
             beat.each.with_index do |note, k|
