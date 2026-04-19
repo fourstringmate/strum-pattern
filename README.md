@@ -19,13 +19,49 @@ You will get *D-DU-_U-DU.png* in your working directory.
 
 ## Strumming Notation
 
+The notation is intentionally lightweight and focuses on *playing intent* rather than strict musical representation.
+
+### Basic Symbols
+
+* `D` — downward strum  
+* `U` — upward strum  
+* `R` — rest (no sound)  
+* `_` — continuation (sustain the previous sounding note)
+
+### Structure
+
+* `-` separates **rhythm cells** within a measure  
+* Each cell has equal metrical weight  
+* The number of characters inside a cell determines its subdivision:
+  * `D` → quarter note
+  * `DU` → eighth notes
+  * `DUU` → triplets
+  * `DUDU` → sixteenth notes
+  * etc.
+
+In other words, a cell defines *how a beat is subdivided*, not just a single note.
+
+### Examples
+
 * `D-D-D-D`
 * `D-D-DU-DU`
 * `RU-RU-RU-RU` (rest)
-* `D-D-D-_` (half note)
-* `D_DU-DU-D_DU-DU` (sixteenth note)
-* `D-DU-_U-DU` (tie)
-* `D_U-D_U-D_U-D_U` (swing)
+* `D-D-D-_` (sustained note, equivalent to a longer duration)
+* `D_DU-DU-D_DU-DU` (sixteenth feel)
+* `D-DU-_U-DU` (tie-like continuation)
+* `D_U-D_U-D_U-D_U` (swing feel)
+
+### About `_` (Continuation)
+
+The `_` symbol indicates that the previous sounding note continues.
+
+The exact musical representation is **inferred automatically**:
+
+* If the continuation can be expressed as a single longer note, it will be merged
+* Otherwise, it will be rendered as tied notes
+
+This means users do **not** need to explicitly specify ties or note durations —  
+the program derives them from the pattern.
 
 ## Command-Line Parameters
 
@@ -37,7 +73,9 @@ You will get *D-DU-_U-DU.png* in your working directory.
 
 ## Limitation
 
-To simplify its usage, the program merely support common strumming patterns. If you want something more complex, generate its LilyPond code for further modification by yourself.
+To simplify its usage, the program focuses on common strumming patterns.
+
+For more complex rhythms or precise control, you can generate the LilyPond code and refine it manually.
 
 ## Contribute
 
