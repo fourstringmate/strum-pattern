@@ -7,6 +7,12 @@ Utility to generate common strumming diagrams for both guitars and ukuleles.
 * A recent [LilyPond](http://lilypond.org/)
 * A recent [Ruby](https://www.ruby-lang.org/)
 
+## Project Status
+
+The project is functional and currently maintained at a minimal level.  
+There may be some edge cases in the strumming DSL that are not fully handled.  
+No new features are planned, though critical fixes may be considered if necessary.
+
 ## Usage
 
 Invoke the following command to generate its strumming diagram:
